@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokemonAPI", "AWSServerless1\PokemonAPI.csproj", "{49EE5415-61EF-4BC5-9A0D-EB290C0F5D4C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokemonAPI.Tests", "AWSServerless1.Tests\PokemonAPI.Tests.csproj", "{3B019EDD-E581-43FA-8D14-DFA9340107DF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{49EE5415-61EF-4BC5-9A0D-EB290C0F5D4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49EE5415-61EF-4BC5-9A0D-EB290C0F5D4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49EE5415-61EF-4BC5-9A0D-EB290C0F5D4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49EE5415-61EF-4BC5-9A0D-EB290C0F5D4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B019EDD-E581-43FA-8D14-DFA9340107DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B019EDD-E581-43FA-8D14-DFA9340107DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B019EDD-E581-43FA-8D14-DFA9340107DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B019EDD-E581-43FA-8D14-DFA9340107DF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {73C0E1A3-DB3A-4559-9044-3FC8E61FFF7C}
+	EndGlobalSection
+EndGlobal
