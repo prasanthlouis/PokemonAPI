@@ -8,6 +8,7 @@ namespace PokemonAPI.Models
 {
     public class PokemonDetails
     {
+
         public string Name { get; set; }
         public string Description { get; set; }
 #nullable enable
