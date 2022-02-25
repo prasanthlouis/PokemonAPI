@@ -2,12 +2,15 @@
 
 using PokemonAPI.Models;
 using PokemonAPI.Repositories;
+using System.Threading.Tasks;
 
 namespace PokemonAPI.Engines
 {
     public interface IPokemonDetailsEngine
     {
-        PokemonDetails GetPokemonDetails(string pokemonName);
+        Task<PokemonDetails> GetPokemonDetails(string pokemonName);
+
+
     }
     public class PokemonDetailsEngine : IPokemonDetailsEngine
     {
@@ -18,10 +21,9 @@ namespace PokemonAPI.Engines
             _pokemonDetailsRepository = pokemonDetailsRepository;
         }
 
-        public PokemonDetails GetPokemonDetails(string pokemonName)
+        public async Task<PokemonDetails> GetPokemonDetails(string pokemonName)
         {
-            var pokemonDetails = _pokemonDetailsRepository.GetPokemonDetails(pokemonName);
-            return pokemonDetails;
+            return await _pokemonDetailsRepository.GetPokemonDetails(pokemonName);
         }
 
     }

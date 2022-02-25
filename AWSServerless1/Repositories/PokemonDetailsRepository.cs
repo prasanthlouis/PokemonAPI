@@ -1,4 +1,7 @@
-﻿using PokemonAPI.Models;
+﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.Model;
+using PokemonAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,21 +12,65 @@ namespace PokemonAPI.Repositories
 {
     public interface IPokemonDetailsRepository
     {
-        PokemonDetails GetPokemonDetails(string pokemonName);
+        Task<PokemonDetails> GetPokemonDetails(string pokemonName);
+    }
+    [DynamoDBTable("pokemon-API-PokemonTable-1LQQO161W484B")]
+    public class PokemonTable
+    {
+        public string PokemonName { get; set; }
+        public string PokemonType { get; set; }
     }
     public class PokemonDetailsRepository : IPokemonDetailsRepository
     {
-        public PokemonDetails GetPokemonDetails(string pokemonName)
+        public static AmazonDynamoDBClient client = new AmazonDynamoDBClient();
+        private readonly string DynamoTableName = "pokemon-API-PokemonTable-1LQQO161W484B";
+        public async Task<PokemonDetails> GetPokemonDetails(string pokemonName)
         {
-            var pokeDictionary = new Dictionary<string, string>();
-            pokeDictionary.Add("Charizard", "Fire, Dragons");
-            pokeDictionary.Add("Clefairy", "Flying, fluffy");
-            return new PokemonDetails()
+            var book1 = new PokemonTable()
             {
-                Description = "A winged Dragon",
-                Name = pokemonName,
-                Fruit = null
+                PokemonName = "notyou",
+                PokemonType = "notme"
             };
+
+            var book2 = new PokemonTable()
+            {
+                PokemonName = "CDR",
+                PokemonType = "CDR"
+            };
+/*            var request = new GetItemRequest
+            {
+                TableName = DynamoTableName,
+                Key = new Dictionary<string, AttributeValue>()
+            {
+                { "PokemonName", new AttributeValue {
+                      S = pokemonName
+                  } }
+            },
+                ConsistentRead = true
+            };
+            var response = await client.GetItemAsync(request);
+            var retrievedPokemonName = response.Item["PokemonName"].S;
+            var pokemonType = response.Item["PokemonType"].S;*/
+
+            DynamoDBContext context = new DynamoDBContext(client);
+            var bookBatch = context.CreateBatchWrite<PokemonTable>();
+            bookBatch.AddPutItems(new List<PokemonTable> { book1, book2 });
+            try
+            {
+                await bookBatch.ExecuteAsync();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return new PokemonDetails
+            {
+                Name = "",
+                Description = ""
+            };
+
+
         }
     }
 }

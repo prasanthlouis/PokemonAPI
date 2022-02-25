@@ -5,6 +5,15 @@
   "Parameters": {},
   "Conditions": {},
   "Resources": {
+  "PokemonTable":{
+   "Type": "AWS::Serverless::SimpleTable",
+   "Properties":{
+      "PrimaryKey":{
+         "Name": "PokemonName",
+         "Type": "String"
+         }
+         }
+         },
     "AspNetCoreFunction": {
       "Type": "AWS::Serverless::Function",
       "Properties": {
@@ -44,8 +53,8 @@
         "DockerTag": ""
       }
     }
-
   },
+
 
   "Outputs": {
     "ApiURL": {

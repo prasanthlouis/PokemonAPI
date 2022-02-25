@@ -10,7 +10,7 @@ namespace PokemonAPI.Managers
 {
     public interface IPokemonDetailsManager
     {
-        PokemonDetails GetPokemonDetails(string pokemonName);
+        Task<PokemonDetails> GetPokemonDetails(string pokemonName);
     }
     public class PokemonDetailsManager : IPokemonDetailsManager
     {
@@ -20,10 +20,9 @@ namespace PokemonAPI.Managers
         {
             _pokemonDetailsEngine = pokemonDetailsEngine;
         }
-        public PokemonDetails GetPokemonDetails(string pokemonName)
+        public async Task<PokemonDetails> GetPokemonDetails(string pokemonName)
         {
-            var pokemonDetails = _pokemonDetailsEngine.GetPokemonDetails(pokemonName);
-            return pokemonDetails;
+            return await _pokemonDetailsEngine.GetPokemonDetails(pokemonName);
         }
     }
 }
