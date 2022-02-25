@@ -2,7 +2,9 @@ name: Build and test
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
+  push:
+    branches: [ master ]
 
 jobs:
   build:
@@ -27,4 +29,3 @@ jobs:
     
     - name: Test
       run: dotnet test -c Release --no-build --verbosity normal --filter "Category!=LongRunning"
-
