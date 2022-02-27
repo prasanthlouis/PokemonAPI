@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PokemonAPI.Engines;
+using PokemonAPI.FeatureFlags.Providers;
 using PokemonAPI.Managers;
 using PokemonAPI.Repositories;
 
@@ -12,6 +13,7 @@ namespace AWSServerless1
 {
     public class Startup
     {
+        private IWebHostEnvironment _env;
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -26,11 +28,22 @@ namespace AWSServerless1
             services.AddTransient<IPokemonDetailsManager, PokemonDetailsManager>();
             services.AddTransient<IPokemonDetailsEngine, PokemonDetailsEngine>();
             services.AddTransient<IPokemonDetailsRepository, PokemonDetailsRepository>();
+            if(_env.IsDevelopment())
+            {
+                services.AddTransient<IFeatureFlagProvider, LocalModeFeatureFlagProvider>();
+            }
+            else
+            {
+                services.AddTransient<IFeatureFlagProvider, ReleaseFeatureFlagProvider>();
+            }
+
+            services.AddTransient<IFeatureFlagProvider, SplitFeatureFlagProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            _env = env;
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
