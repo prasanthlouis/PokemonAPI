@@ -10,6 +10,8 @@ namespace PokemonAPI.Managers
     }
     public class AttackDescriptionManager : IAttackDescriptionStrategy
     {
+        public string Key => "on";
+
         public Dictionary<string, string> GetHeaders(string pokemonName)
         {
             return new Dictionary<string, string>()
@@ -36,5 +38,7 @@ namespace PokemonAPI.Managers
         {
             return "Coming soon!";
         }
+
+        public string Key => "off";
     }
 }

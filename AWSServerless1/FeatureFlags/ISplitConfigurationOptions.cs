@@ -2,7 +2,7 @@
 
 namespace PokemonAPI.FeatureFlags
 {
-    public interface ISplitConfigurationOptions
+    public class SplitConfigurationOptions
     {
         public string ApiKey { get; set; }
         public int? FeatureRefreshRate { get; set; }

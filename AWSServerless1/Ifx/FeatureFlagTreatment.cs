@@ -7,7 +7,7 @@ namespace PokemonAPI.Ifx
 {
     public interface IFeatureFlagTreatment
     {
-        string GetFeatureTreatment(IFeatureFlag feature);
+        string GetFeatureTreatment(IFeature feature);
     }
     public class FeatureFlagTreatment : IFeatureFlagTreatment
     {
@@ -16,7 +16,7 @@ namespace PokemonAPI.Ifx
         {
             _featureFlagProviders = featureFlagProviders;
         }
-        public string GetFeatureTreatment(IFeatureFlag feature)
+        public string GetFeatureTreatment(IFeature feature)
         {
             string treatment = string.Empty;
             var featureFlagProvider = _featureFlagProviders.Where(x => x.HasFeature(feature))

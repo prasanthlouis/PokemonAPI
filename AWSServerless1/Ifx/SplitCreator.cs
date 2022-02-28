@@ -13,11 +13,10 @@ namespace PokemonAPI.Ifx
     }
     public class SplitCreator : ISplitCreator, IDisposable
     {
-        private readonly ILogger<SplitCreator> _logger;
-        private ISplitConfigurationOptions _splitConfig;
+        private SplitConfigurationOptions _splitConfig;
         public ISplitClient SplitClient { get; set; }
 
-        public SplitCreator(IOptions<ISplitConfigurationOptions> splitConfigOptions)
+        public SplitCreator(IOptions<SplitConfigurationOptions> splitConfigOptions, ILogger<SplitCreator> logger)
         {
             _splitConfig = splitConfigOptions.Value;
             var config = new ConfigurationOptions
@@ -28,20 +27,22 @@ namespace PokemonAPI.Ifx
 
             if(string.IsNullOrWhiteSpace(_splitConfig.ApiKey))
             {
-                _logger.LogError("SplitConfig apiKey was not found in appsettings");
+                logger.LogError("SplitConfig apiKey was not found in appsettings");
             }
 
-            var splitFactory = new SplitFactory(_splitConfig.ApiKey, config);
-            SplitClient = splitFactory.Client();
-
-            var blockOnCreateUntilReadyMs = _splitConfig.BlockOnCreateUntilReadyMs ?? 1000;
             try
             {
+
+                var splitFactory = new SplitFactory(_splitConfig.ApiKey, config);
+                SplitClient = splitFactory.Client();
+
+                var blockOnCreateUntilReadyMs = _splitConfig.BlockOnCreateUntilReadyMs ?? 1000;
                 SplitClient.BlockUntilReady(blockOnCreateUntilReadyMs);
             }
             catch(Exception ex)
             {
-                SplitClient.Destroy();
+                
+                SplitClient?.Destroy();
             }
 
         }

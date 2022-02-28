@@ -1,4 +1,5 @@
-﻿using PokemonAPI.Engines;
+﻿
+
 using PokemonAPI.FeatureFlags;
 using PokemonAPI.Ifx;
 using PokemonAPI.Managers;
@@ -9,7 +10,7 @@ namespace PokemonAPI.Factories.AttackDescription
 {
     public interface IAttackDescriptionFactory
     {
-        string CreateAttackDescription(string pokemonName);
+        IAttackDescription CreateAttackDescription();
     }
     public class AttackDescriptionFactory : IAttackDescriptionFactory
     {
@@ -23,14 +24,14 @@ namespace PokemonAPI.Factories.AttackDescription
             _strategies = strategies;
             _featureFlagTreatment = featureFlagTreatment;
         }
-        public string CreateAttackDescription(string pokemonName)
+        public IAttackDescription CreateAttackDescription()
         {
             if(_strategy == null)
             {
                 _strategy = GetAttackDescriptionStrategy();
             }
 
-            return _strategy.GetPokemonAttackDescription(pokemonName);
+            return new AttackDescription(_strategy);
         }
 
         private IAttackDescriptionStrategy GetAttackDescriptionStrategy()

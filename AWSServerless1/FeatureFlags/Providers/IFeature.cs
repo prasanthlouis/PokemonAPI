@@ -6,8 +6,8 @@ namespace PokemonAPI.FeatureFlags.Providers
     {
         string Key { get; }
         string Title { get; set; }
-        string Explanation { get; set; }
+        string Explanation { get; }
         string DefaultValue { get; }
-        DateTime ExepectedExpiration { get; }
+        DateTime ExpectedExpiration { get; }
     }
 }

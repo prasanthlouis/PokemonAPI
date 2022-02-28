@@ -2,7 +2,11 @@
 
 namespace PokemonAPI.Ifx
 {
-    public class FeatureAwareFactory
+    public interface IFeatureAwareFactory
+    {
+        IAttackDescription CreateAttackDescriptionFactory();
+    }
+    public class FeatureAwareFactory : IFeatureAwareFactory
     {
         private IAttackDescriptionFactory _attackDescriptionFactory;
         public FeatureAwareFactory(IAttackDescriptionFactory attackDescriptionFactory)
@@ -10,7 +14,7 @@ namespace PokemonAPI.Ifx
             _attackDescriptionFactory = attackDescriptionFactory;
         }
 
-        public IAttackDescriptionFactory CreateAttackDescriptionFactory()
+        public IAttackDescription CreateAttackDescriptionFactory()
         {
             return _attackDescriptionFactory.CreateAttackDescription();
         }

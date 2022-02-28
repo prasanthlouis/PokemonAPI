@@ -3,6 +3,8 @@ using Amazon.DynamoDBv2.Model;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using Microsoft.AspNetCore.Mvc;
+using PokemonAPI.Factories.AttackDescription;
+using PokemonAPI.Ifx;
 using PokemonAPI.Managers;
 using System;
 using System.Collections.Generic;
@@ -16,18 +18,21 @@ namespace AWSServerless1.Controllers
     public class PokemonController : ControllerBase
     {
         private readonly IPokemonDetailsManager _pokemonDetailsManager;
-
-        public PokemonController(IPokemonDetailsManager pokemonDetailsManager)
+        private readonly IAttackDescription _attackDescription;
+        public PokemonController(IFeatureAwareFactory featureAwareFactory, IPokemonDetailsManager pokemonDetailsManager, IAttackDescriptionStrategy attackDescriptionStrategy)
         {
             _pokemonDetailsManager = pokemonDetailsManager;
+            _attackDescription = featureAwareFactory.CreateAttackDescriptionFactory();
         }
         // GET api/values
         [HttpGet]
         public async Task<APIGatewayProxyResponse> GetPokemonDetails()
         {
+            try
+            {
 
                 var pokemonDetails = await _pokemonDetailsManager.GetPokemonDetails("Charizard");
-               
+                pokemonDetails.PokemonAttacks = _attackDescription.GetPokemonAttackDescription("Charizard");
                 var response = new APIGatewayProxyResponse
                 {
                     StatusCode = (int)HttpStatusCode.OK,
@@ -36,6 +41,16 @@ namespace AWSServerless1.Controllers
                 };
 
                 return response;
+            }
+            catch (Exception ex)
+            {
+                return new APIGatewayProxyResponse
+                {
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                    Body = "Something went wrong",
+                    Headers = new Dictionary<string, string> { { "Content-Type", "text/plain" } }
+                };
+            }
         }
     }
 }

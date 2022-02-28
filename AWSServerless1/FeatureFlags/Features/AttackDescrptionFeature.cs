@@ -1,18 +1,18 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using PokemonAPI.FeatureFlags;
+using PokemonAPI.FeatureFlags.Providers;
 using System;
 using System.Collections.Generic;
 
-namespace PokemonAPI.Engines
+namespace PokemonAPI.FeatureFlags
 {
-    public interface IAttackDescription
+    public interface IAttackDescriptionFeature : IFeature
     {
 
     }
-    public class AttackDescription : IAttackDescription
+    public class AttackDescriptionFeature : IAttackDescriptionFeature
     {
-        public AttackDescription(IOptions<ISplitConfigurationOptions> splitConfigOptions, ILogger<AttackDescription> logger)
+        public AttackDescriptionFeature(IOptions<SplitConfigurationOptions> splitConfigOptions, ILogger<AttackDescriptionFeature> logger)
         {
             if(DateTime.Now > ExpectedExpiration)
             {
@@ -40,7 +40,7 @@ namespace PokemonAPI.Engines
             }
         }
 
-        public string Key = "anonymous";
+        public string Key => "anonymous";
         public string Explanation => "Determined whether to display pokemon attacks or not";
         public string DefaultValue => "off";
         public string Title { get; set; }

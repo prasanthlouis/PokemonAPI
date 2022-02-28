@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using PokemonAPI.Engines;
+using PokemonAPI.Factories.AttackDescription;
 using PokemonAPI.FeatureFlags.Enums;
 using PokemonAPI.Ifx;
 
@@ -28,7 +29,7 @@ namespace PokemonAPI.FeatureFlags.Providers
 
         public bool HasFeature(IFeature feature)
         {
-            if (feature is IsOauthEnabled)
+            if (feature is IAttackDescription)
                 return true;
             return false;
         }

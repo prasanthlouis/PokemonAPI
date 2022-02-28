@@ -11,6 +11,7 @@ namespace PokemonAPI.Models
 
         public string Name { get; set; }
         public string Description { get; set; }
+        public string PokemonAttacks { get; set; }
 #nullable enable
         public Fruit? Fruit { get; set; }
 #nullable disable

@@ -1,16 +1,18 @@
 ﻿using PokemonAPI.Engines;
+using PokemonAPI.Factories.AttackDescription;
+using PokemonAPI.FeatureFlags.Providers;
 
 namespace PokemonAPI.FeatureFlags
 {
 
     public interface IFeatureFlag
     {
-        IAttackDescription _attackDescription { get; set; }
+        IAttackDescriptionFeature _attackDescription { get; set; }
     }
     public class FeatureFlag : IFeatureFlag
     {
-        public IAttackDescription _attackDescription { get; set; }
-        public FeatureFlag(IAttackDescription attackDescription)
+        public IAttackDescriptionFeature _attackDescription { get; set; }
+        public FeatureFlag(IAttackDescriptionFeature attackDescription)
         {
             _attackDescription = attackDescription;
         }
