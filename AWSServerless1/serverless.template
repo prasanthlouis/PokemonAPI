@@ -8,6 +8,7 @@
   "PokemonTable":{
    "Type": "AWS::Serverless::SimpleTable",
    "Properties":{
+   "TableName": "TinyPokemonTable",
       "PrimaryKey":{
          "Name": "PokemonName",
          "Type": "String"

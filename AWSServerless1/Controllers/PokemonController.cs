@@ -26,14 +26,25 @@ namespace PokemonAPI.Controllers
             _pokemonDetailsManager = pokemonDetailsManager;
             _attackDescription = featureAwareFactory.CreateAttackDescriptionFactory();
         }
-        // GET api/values
+        // GET
         [HttpGet]
         public async Task<APIGatewayProxyResponse> GetPokemonDetails()
         {
             try
-            {
-                var pokemonDetails = await AWSXRayRecorder.Instance.TraceMethod(nameof(GetPokemonDetails), async () =>  await _pokemonDetailsManager.GetPokemonDetails("Charizard"));
-                pokemonDetails.PokemonAttacks = _attackDescription.GetPokemonAttackDescription("Charizard");
+            { 
+                string pokemonName = "";
+                var apiGatewayProxyRequest = HttpContext?.Items?[Amazon.Lambda.AspNetCoreServer.AbstractAspNetCoreFunction.LAMBDA_REQUEST_OBJECT] as APIGatewayProxyRequest;
+                var queryStringPokemonName = apiGatewayProxyRequest?.QueryStringParameters["name"];
+                if (queryStringPokemonName != null)
+                {
+                    pokemonName = queryStringPokemonName.Trim();
+                }
+                if(string.IsNullOrWhiteSpace(pokemonName))
+                {
+                    pokemonName = "Clefairy";
+                }
+                var pokemonDetails = await AWSXRayRecorder.Instance.TraceMethod(nameof(GetPokemonDetails), async () =>  await _pokemonDetailsManager.GetPokemonDetails(pokemonName));
+                pokemonDetails.PokemonAttacks = _attackDescription.GetPokemonAttackDescription(pokemonName);
                 var response = new APIGatewayProxyResponse
                 {
                     StatusCode = (int)HttpStatusCode.OK,
@@ -48,7 +59,7 @@ namespace PokemonAPI.Controllers
                 return new APIGatewayProxyResponse
                 {
                     StatusCode = (int)HttpStatusCode.InternalServerError,
-                    Body = "Something went wrong",
+                    Body = $"Something went wrong {ex.Message} {ex.InnerException}",
                     Headers = new Dictionary<string, string> { { "Content-Type", "text/plain" } }
                 };
             }

@@ -7,6 +7,7 @@ namespace PokemonAPI.Ifx
 {
     public interface IFeatureFlagTreatment
     {
+
         string GetFeatureTreatment(IFeature feature);
     }
     public class FeatureFlagTreatment : IFeatureFlagTreatment

@@ -56,6 +56,8 @@ namespace PokemonAPI
             services.AddTransient<IAttackDescriptionFactory, AttackDescriptionFactory>();
             services.AddTransient<IAttackDescriptionFeature, AttackDescriptionFeature>();
             services.Configure<SplitConfigurationOptions>(Configuration.GetSection("SplitConfig"));
+            services.AddEndpointsApiExplorer();
+            services.AddSwaggerGen();
             AWSSDKHandler.RegisterXRayForAllServices();
         }
 
@@ -73,6 +75,8 @@ namespace PokemonAPI
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             app.UseEndpoints(endpoints =>
             {

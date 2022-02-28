@@ -14,7 +14,7 @@ namespace PokemonAPI.Repositories
     {
         Task<PokemonDetails> GetPokemonDetails(string pokemonName);
     }
-    [DynamoDBTable("pokemon-API-PokemonTable-10WSLRWTUES0F")]
+    [DynamoDBTable("TinyPokemonTable")]
     public class PokemonTable
     {
         public string PokemonName { get; set; }
@@ -23,7 +23,7 @@ namespace PokemonAPI.Repositories
     public class PokemonDetailsRepository : IPokemonDetailsRepository
     {
         public static AmazonDynamoDBClient client = new AmazonDynamoDBClient();
-        private readonly string DynamoTableName = "pokemon-API-PokemonTable-10WSLRWTUES0F";
+        private readonly string DynamoTableName = "TinyPokemonTable";
         public async Task<PokemonDetails> GetPokemonDetails(string pokemonName)
         {
             var book1 = new PokemonTable()
