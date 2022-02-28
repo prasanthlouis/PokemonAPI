@@ -2,6 +2,8 @@
 using Amazon.DynamoDBv2.Model;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
+using Amazon.XRay.Recorder.Core;
+using Amazon.XRay.Recorder.Core.Strategies;
 using Microsoft.AspNetCore.Mvc;
 using PokemonAPI.Factories.AttackDescription;
 using PokemonAPI.Ifx;
@@ -12,7 +14,7 @@ using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace AWSServerless1.Controllers
+namespace PokemonAPI.Controllers
 {
     [Route("api/[controller]")]
     public class PokemonController : ControllerBase
@@ -30,8 +32,7 @@ namespace AWSServerless1.Controllers
         {
             try
             {
-
-                var pokemonDetails = await _pokemonDetailsManager.GetPokemonDetails("Charizard");
+                var pokemonDetails = await AWSXRayRecorder.Instance.TraceMethod(nameof(GetPokemonDetails), async () =>  await _pokemonDetailsManager.GetPokemonDetails("Charizard"));
                 pokemonDetails.PokemonAttacks = _attackDescription.GetPokemonAttackDescription("Charizard");
                 var response = new APIGatewayProxyResponse
                 {

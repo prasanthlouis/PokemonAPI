@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "AWSServerless1.Tests": {
+    "PokemonAPI.Tests": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

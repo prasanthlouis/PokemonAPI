@@ -55,15 +55,15 @@ FROM public.ecr.aws/lambda/dotnet:6 AS base
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0-bullseye-slim as build
 WORKDIR /src
-COPY ["AWSServerless1.csproj", "AWSServerless1/"]
-RUN dotnet restore "AWSServerless1/AWSServerless1.csproj"
+COPY ["PokemonAPI.csproj", "PokemonAPI/"]
+RUN dotnet restore "PokemonAPI/PokemonAPI.csproj"
 
-WORKDIR "/src/AWSServerless1"
+WORKDIR "/src/PokemonAPI"
 COPY . .
-RUN dotnet build "AWSServerless1.csproj" --configuration Release --output /app/build
+RUN dotnet build "PokemonAPI.csproj" --configuration Release --output /app/build
 
 FROM build AS publish
-RUN dotnet publish "AWSServerless1.csproj" \
+RUN dotnet publish "PokemonAPI.csproj" \
             --configuration Release \ 
             --runtime linux-x64 \
             --self-contained false \ 
@@ -97,12 +97,12 @@ If already installed check if new version is available.
 
 Execute unit tests
 ```
-    cd "AWSServerless1/test/AWSServerless1.Tests"
+    cd "PokemonAPI/test/PokemonAPI.Tests"
     dotnet test
 ```
 
 Deploy application
 ```
-    cd "AWSServerless1/src/AWSServerless1"
+    cd "PokemonAPI/src/PokemonAPI"
     dotnet lambda deploy-serverless
 ```

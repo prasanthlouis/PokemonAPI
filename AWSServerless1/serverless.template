@@ -17,18 +17,22 @@
     "AspNetCoreFunction": {
       "Type": "AWS::Serverless::Function",
       "Properties": {
+
         "PackageType": "Image",
         "ImageConfig": {
           "Command": [
-            "AWSServerless1::AWSServerless1.LambdaEntryPoint::FunctionHandlerAsync"
+            "PokemonAPI::PokemonAPI.LambdaEntryPoint::FunctionHandlerAsync"
           ]
         },
         "ImageUri": "",
         "MemorySize": 256,
         "Timeout": 30,
         "Role": null,
+        "Tracing": "Active",
         "Policies": [
-          "AWSLambda_FullAccess"
+          "AWSLambda_FullAccess",
+          "AWSXrayWriteOnlyAccess",
+          "AmazonDynamoDBFullAccess"
         ],
         "Events": {
           "ProxyResource": {

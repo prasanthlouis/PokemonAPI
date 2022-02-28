@@ -1,3 +1,6 @@
+using Amazon.XRay.Recorder.Core;
+using Amazon.XRay.Recorder.Core.Strategies;
+using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -12,7 +15,7 @@ using PokemonAPI.Ifx;
 using PokemonAPI.Managers;
 using PokemonAPI.Repositories;
 
-namespace AWSServerless1
+namespace PokemonAPI
 {
     public class Startup
     {
@@ -53,6 +56,7 @@ namespace AWSServerless1
             services.AddTransient<IAttackDescriptionFactory, AttackDescriptionFactory>();
             services.AddTransient<IAttackDescriptionFeature, AttackDescriptionFeature>();
             services.Configure<SplitConfigurationOptions>(Configuration.GetSection("SplitConfig"));
+            AWSSDKHandler.RegisterXRayForAllServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
@@ -61,6 +65,7 @@ namespace AWSServerless1
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                AWSXRayRecorder.Instance.ContextMissingStrategy = ContextMissingStrategy.LOG_ERROR;
             }
 
             app.UseHttpsRedirection();
