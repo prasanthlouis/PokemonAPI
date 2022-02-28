@@ -43,7 +43,6 @@ namespace PokemonAPI.Controllers
         /// <response code="200">Returns the found pokemon</response>
         /// <response code="404">Could not find the pokemon</response> 
         /// <response code="500">Something went wrong</response> 
-        // GET
         [HttpGet]
         public async Task<APIGatewayProxyResponse> GetPokemonDetails()
         { 
@@ -64,7 +63,6 @@ namespace PokemonAPI.Controllers
                 };
 
                 return response;
-            }
         }
     }
 }
