@@ -5,6 +5,7 @@ using Amazon.Lambda.Core;
 using Amazon.XRay.Recorder.Core;
 using Amazon.XRay.Recorder.Core.Strategies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using PokemonAPI.Factories.AttackDescription;
 using PokemonAPI.Ifx;
 using PokemonAPI.Managers;
@@ -16,32 +17,42 @@ using System.Threading.Tasks;
 
 namespace PokemonAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     public class PokemonController : ControllerBase
     {
         private readonly IPokemonDetailsManager _pokemonDetailsManager;
         private readonly IAttackDescription _attackDescription;
-        public PokemonController(IFeatureAwareFactory featureAwareFactory, IPokemonDetailsManager pokemonDetailsManager, IAttackDescriptionStrategy attackDescriptionStrategy)
+        private readonly ILogger<PokemonController> _logger;
+        public PokemonController(IFeatureAwareFactory featureAwareFactory, IPokemonDetailsManager pokemonDetailsManager, IAttackDescriptionStrategy attackDescriptionStrategy, ILogger<PokemonController> logger)
         {
             _pokemonDetailsManager = pokemonDetailsManager;
             _attackDescription = featureAwareFactory.CreateAttackDescriptionFactory();
+            _logger = logger;
         }
+
+        /// <summary>
+        /// Fetches a certain pokemon.
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     GET api/v1/Pokemon?name=Charizard
+        ///
+        /// </remarks>
+        /// <returns>Details about the pokemon</returns>
+        /// <response code="200">Returns the found pokemon</response>
+        /// <response code="404">Could not find the pokemon</response> 
+        /// <response code="500">Something went wrong</response> 
         // GET
         [HttpGet]
         public async Task<APIGatewayProxyResponse> GetPokemonDetails()
-        {
-            try
-            { 
-                string pokemonName = "";
+        { 
                 var apiGatewayProxyRequest = HttpContext?.Items?[Amazon.Lambda.AspNetCoreServer.AbstractAspNetCoreFunction.LAMBDA_REQUEST_OBJECT] as APIGatewayProxyRequest;
-                var queryStringPokemonName = apiGatewayProxyRequest?.QueryStringParameters["name"];
-                if (queryStringPokemonName != null)
+                var pokemonName = apiGatewayProxyRequest?.QueryStringParameters["name"];
+                if (string.IsNullOrWhiteSpace(pokemonName))
                 {
-                    pokemonName = queryStringPokemonName.Trim();
-                }
-                if(string.IsNullOrWhiteSpace(pokemonName))
-                {
-                    pokemonName = "Clefairy";
+                    _logger.LogError("Could not find pokemon name");
+                    throw new Exception("Could not find pokemon name");
                 }
                 var pokemonDetails = await AWSXRayRecorder.Instance.TraceMethod(nameof(GetPokemonDetails), async () =>  await _pokemonDetailsManager.GetPokemonDetails(pokemonName));
                 pokemonDetails.PokemonAttacks = _attackDescription.GetPokemonAttackDescription(pokemonName);
@@ -53,15 +64,6 @@ namespace PokemonAPI.Controllers
                 };
 
                 return response;
-            }
-            catch (Exception ex)
-            {
-                return new APIGatewayProxyResponse
-                {
-                    StatusCode = (int)HttpStatusCode.InternalServerError,
-                    Body = $"Something went wrong {ex.Message} {ex.InnerException}",
-                    Headers = new Dictionary<string, string> { { "Content-Type", "text/plain" } }
-                };
             }
         }
     }

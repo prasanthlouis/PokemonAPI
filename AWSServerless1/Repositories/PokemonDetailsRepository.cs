@@ -1,6 +1,7 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.Model;
+using Microsoft.Extensions.Logging;
 using PokemonAPI.Models;
 using System;
 using System.Collections.Generic;
@@ -14,42 +15,21 @@ namespace PokemonAPI.Repositories
     {
         Task<PokemonDetails> GetPokemonDetails(string pokemonName);
     }
-    [DynamoDBTable("TinyPokemonTable")]
-    public class PokemonTable
-    {
-        public string PokemonName { get; set; }
-        public string PokemonType { get; set; }
-    }
+
     public class PokemonDetailsRepository : IPokemonDetailsRepository
     {
         public static AmazonDynamoDBClient client = new AmazonDynamoDBClient();
         private readonly string DynamoTableName = "TinyPokemonTable";
+        private readonly ILogger<PokemonDetailsRepository> _logger;
+
+        public PokemonDetailsRepository(ILogger<PokemonDetailsRepository> logger)
+        {
+            _logger = logger;
+        }
         public async Task<PokemonDetails> GetPokemonDetails(string pokemonName)
         {
-            var book1 = new PokemonTable()
-            {
-                PokemonName = "Charizard",
-                PokemonType = "It's a dragon!"
-            };
-
-            var book2 = new PokemonTable()
-            {
-                PokemonName = "Chansey",
-                PokemonType = "It's a winged fairy pokemon!"
-            };
-
-
-            DynamoDBContext context = new DynamoDBContext(client);
-            var bookBatch = context.CreateBatchWrite<PokemonTable>();
-            bookBatch.AddPutItems(new List<PokemonTable> { book1, book2 });
-            try
-            {
-                await bookBatch.ExecuteAsync();
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
+            //TODO: Call this only during initial cloudformation create
+            await PopulateDynamoDb();
 
             var request = new GetItemRequest
             {
@@ -73,6 +53,35 @@ namespace PokemonAPI.Repositories
             };
 
 
+        }
+
+        private async Task PopulateDynamoDb()
+        {
+            var charizard = new PokemonTable()
+            {
+                PokemonName = "Charizard",
+                PokemonType = "It's a dragon!"
+            };
+
+            var chansey = new PokemonTable()
+            {
+                PokemonName = "Chansey",
+                PokemonType = "It's a winged fairy pokemon!"
+            };
+
+
+            DynamoDBContext context = new DynamoDBContext(client);
+            var bookBatch = context.CreateBatchWrite<PokemonTable>();
+            bookBatch.AddPutItems(new List<PokemonTable> { charizard, chansey });
+            try
+            {
+                await bookBatch.ExecuteAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
         }
     }
 }

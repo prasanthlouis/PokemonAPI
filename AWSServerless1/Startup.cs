@@ -33,28 +33,28 @@ namespace PokemonAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddTransient<IPokemonDetailsManager, PokemonDetailsManager>();
-            services.AddTransient<IPokemonDetailsEngine, PokemonDetailsEngine>();
-            services.AddTransient<IPokemonDetailsRepository, PokemonDetailsRepository>();
+            services.AddScoped<IPokemonDetailsManager, PokemonDetailsManager>();
+            services.AddScoped<IPokemonDetailsEngine, PokemonDetailsEngine>();
+            services.AddScoped<IPokemonDetailsRepository, PokemonDetailsRepository>();
             if(CurrentEnvironment.IsDevelopment())
             {
-                services.AddTransient<IFeatureFlagProvider, LocalModeFeatureFlagProvider>();
+                services.AddScoped<IFeatureFlagProvider, LocalModeFeatureFlagProvider>();
             }
             else
             {
-                services.AddTransient<IFeatureFlagProvider, ReleaseFeatureFlagProvider>();
+                services.AddScoped<IFeatureFlagProvider, ReleaseFeatureFlagProvider>();
             }
 
-            services.AddTransient<IFeatureFlagProvider, SplitFeatureFlagProvider>();
-            services.AddTransient<IFeatureAwareFactory, FeatureAwareFactory>();
-            services.AddTransient<IAttackDescriptionStrategy, AttackDescriptionManager>();
-            services.AddTransient<IAttackDescriptionStrategy, AttackDescriptionManagerDisabled>();
-            services.AddTransient<ISplitCreator, SplitCreator>();
-            services.AddTransient<IFeatureFlag, FeatureFlag>();
-            services.AddTransient<IFeatureFlagTreatment, FeatureFlagTreatment>();
-            services.AddTransient<IAttackDescription, AttackDescription>();
-            services.AddTransient<IAttackDescriptionFactory, AttackDescriptionFactory>();
-            services.AddTransient<IAttackDescriptionFeature, AttackDescriptionFeature>();
+            services.AddScoped<IFeatureFlagProvider, SplitFeatureFlagProvider>();
+            services.AddScoped<IFeatureAwareFactory, FeatureAwareFactory>();
+            services.AddScoped<IAttackDescriptionStrategy, AttackDescriptionManager>();
+            services.AddScoped<IAttackDescriptionStrategy, AttackDescriptionManagerDisabled>();
+            services.AddScoped<ISplitCreator, SplitCreator>();
+            services.AddScoped<IFeatureFlag, FeatureFlag>();
+            services.AddScoped<IFeatureFlagTreatment, FeatureFlagTreatment>();
+            services.AddScoped<IAttackDescription, AttackDescription>();
+            services.AddScoped<IAttackDescriptionFactory, AttackDescriptionFactory>();
+            services.AddScoped<IAttackDescriptionFeature, AttackDescriptionFeature>();
             services.Configure<SplitConfigurationOptions>(Configuration.GetSection("SplitConfig"));
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
