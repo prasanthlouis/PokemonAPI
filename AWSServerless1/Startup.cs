@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PokemonAPI.Common;
 using PokemonAPI.Engines;
 using PokemonAPI.Factories.AttackDescription;
 using PokemonAPI.FeatureFlags;
@@ -55,6 +56,7 @@ namespace PokemonAPI
             services.AddScoped<IAttackDescription, AttackDescription>();
             services.AddScoped<IAttackDescriptionFactory, AttackDescriptionFactory>();
             services.AddScoped<IAttackDescriptionFeature, AttackDescriptionFeature>();
+            services.AddScoped<IHttpContextWrapper, HttpContextWrapper>();
             services.Configure<SplitConfigurationOptions>(Configuration.GetSection("SplitConfig"));
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();

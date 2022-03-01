@@ -6,6 +6,7 @@ using Amazon.XRay.Recorder.Core;
 using Amazon.XRay.Recorder.Core.Strategies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using PokemonAPI.Common;
 using PokemonAPI.Factories.AttackDescription;
 using PokemonAPI.Ifx;
 using PokemonAPI.Managers;
@@ -23,11 +24,13 @@ namespace PokemonAPI.Controllers
         private readonly IPokemonDetailsManager _pokemonDetailsManager;
         private readonly IAttackDescription _attackDescription;
         private readonly ILogger<PokemonController> _logger;
-        public PokemonController(IFeatureAwareFactory featureAwareFactory, IPokemonDetailsManager pokemonDetailsManager, IAttackDescriptionStrategy attackDescriptionStrategy, ILogger<PokemonController> logger)
+        private readonly IHttpContextWrapper _httpContextWrapper;
+        public PokemonController(IFeatureAwareFactory featureAwareFactory, IPokemonDetailsManager pokemonDetailsManager, IAttackDescriptionStrategy attackDescriptionStrategy, ILogger<PokemonController> logger, IHttpContextWrapper httpContextWrapper)
         {
             _pokemonDetailsManager = pokemonDetailsManager;
             _attackDescription = featureAwareFactory.CreateAttackDescriptionFactory();
             _logger = logger;
+            _httpContextWrapper = httpContextWrapper;
         }
 
         /// <summary>
@@ -45,24 +48,25 @@ namespace PokemonAPI.Controllers
         /// <response code="500">Something went wrong</response> 
         [HttpGet]
         public async Task<APIGatewayProxyResponse> GetPokemonDetails()
-        { 
-                var apiGatewayProxyRequest = HttpContext?.Items?[Amazon.Lambda.AspNetCoreServer.AbstractAspNetCoreFunction.LAMBDA_REQUEST_OBJECT] as APIGatewayProxyRequest;
-                var pokemonName = apiGatewayProxyRequest?.QueryStringParameters["name"];
-                if (string.IsNullOrWhiteSpace(pokemonName))
-                {
-                    _logger.LogError("Could not find pokemon name");
-                    throw new Exception("Could not find pokemon name");
-                }
-                var pokemonDetails = await AWSXRayRecorder.Instance.TraceMethod(nameof(GetPokemonDetails), async () =>  await _pokemonDetailsManager.GetPokemonDetails(pokemonName));
-                pokemonDetails.PokemonAttacks = _attackDescription.GetPokemonAttackDescription(pokemonName);
-                var response = new APIGatewayProxyResponse
-                {
-                    StatusCode = (int)HttpStatusCode.OK,
-                    Body = JsonSerializer.Serialize(pokemonDetails),
-                    Headers = new Dictionary<string, string> { { "Content-Type", "text/plain" } }
-                };
+        {
+            var apiGatewayProxyRequest = _httpContextWrapper.GetAPIGatewayProxyRequest(HttpContext);
+            var pokemonName = apiGatewayProxyRequest?.QueryStringParameters["name"];
+            if (string.IsNullOrWhiteSpace(pokemonName))
+            {
+                _logger.LogError("Could not find pokemon name");
+                throw new Exception("Could not find pokemon name");
+            }
+            //var pokemonDetails = await AWSXRayRecorder.Instance.TraceMethod(nameof(GetPokemonDetails), async () =>  await _pokemonDetailsManager.GetPokemonDetails(pokemonName));
+            var pokemonDetails = await _pokemonDetailsManager.GetPokemonDetails(pokemonName);
+            pokemonDetails.PokemonAttacks = _attackDescription.GetPokemonAttackDescription(pokemonName);
+            var response = new APIGatewayProxyResponse
+            {
+                StatusCode = (int)HttpStatusCode.OK,
+                Body = JsonSerializer.Serialize(pokemonDetails),
+                Headers = new Dictionary<string, string> { { "Content-Type", "text/plain" } }
+            };
 
-                return response;
+            return response;
         }
     }
 }
