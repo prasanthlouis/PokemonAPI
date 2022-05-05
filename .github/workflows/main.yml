@@ -1,0 +1,16 @@
+name: Reminder to review pull requests under review
+on:
+  push
+jobs:
+  send_pull_requests:
+    runs-on: ubuntu-latest
+    name: List Pull Requests
+    steps:
+      - name: List Pull Requests
+        uses: buildsville/list-pull-requests@v1
+        id: list
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          labels: '["source"]'
+      - name: output
+        run: echo '${{ steps.list.outputs.pulls }}'
