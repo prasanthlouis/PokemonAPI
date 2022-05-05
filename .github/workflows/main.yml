@@ -1,7 +1,7 @@
 name: Reminder to review pull requests under review
 on:
   schedule:
-    - cron: '* * * * *'
+    - cron: '*/15 * * * *'
 jobs:
   send_pull_requests:
     runs-on: ubuntu-latest
